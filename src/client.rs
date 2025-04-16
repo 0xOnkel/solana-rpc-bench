@@ -24,18 +24,27 @@ struct TestResult {
     best: Duration,
     worst: Duration,
     total: Duration,
+    count: u32,
+}
+
+impl TestResult {
+    fn log(&self, label: &str, call: &str) {
+        println!(
+            "{} - {}\n\tAvg. Duration: {:#?}\n\tBest Duration: {:?}\n\tWorst Duration: {:?}",
+            label,
+            call,
+            self.total.div(self.count),
+            self.best,
+            self.worst,
+        );
+    }
 }
 
 impl Client {
     pub async fn test(&self, count: u32) {
-        let test_result = self.run_test(|| self.rpc.get_slot(), count).await;
-        println!(
-            "{}\n\tAvg. Duration: {:#?}\n\tBest Duration: {:?}\n\tWorst Duration: {:?}",
-            self.label,
-            test_result.total.div(count),
-            test_result.best,
-            test_result.worst,
-        );
+        self.run_test(|| self.rpc.get_slot(), count)
+            .await
+            .log(self.label.as_str(), "get_slot");
     }
 
     async fn run_test<F, Fut, T>(&self, mut f: F, count: u32) -> TestResult
@@ -67,7 +76,12 @@ impl Client {
             sleep(Duration::from_millis(500)).await;
         }
 
-        TestResult { best, worst, total }
+        TestResult {
+            best,
+            worst,
+            total,
+            count,
+        }
     }
 
     // this is our internal test which allows us to reuse the Duration return for the different rpc
