@@ -2,8 +2,15 @@ use config::Config;
 
 #[derive(Debug, serde::Deserialize)]
 pub struct Settings {
-    #[serde(default)]
-    pub rpcs: Vec<String>,
+    #[serde(default, rename = "rpc")]
+    pub rpcs: Vec<SettingClient>,
+}
+
+// This represents an RPC in the settings
+#[derive(Debug, serde::Deserialize)]
+pub struct SettingClient {
+    pub label: String,
+    pub url: String,
 }
 
 impl Settings {

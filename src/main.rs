@@ -1,10 +1,15 @@
-use solana_rpc_bench::setting::Settings;
+use solana_rpc_bench::{client::Client, setting::Settings};
 
-fn main() {
+#[tokio::main]
+async fn main() {
     // this should help, but is not mandatory
     // user can provide the env vars in another way
     let _ = dotenvy::dotenv();
 
     let settings = Settings::new();
-    println!("{settings:#?}");
+    let rpcs: Vec<Client> = settings.rpcs.into_iter().map(|rpc| rpc.into()).collect();
+
+    for rpc in rpcs {
+        rpc.test().await;
+    }
 }
