@@ -28,3 +28,9 @@ impl Settings {
             .expect("couldn't load settings file")
     }
 }
+
+impl Default for Settings {
+    fn default() -> Self {
+        Self::new()
+    }
+}
