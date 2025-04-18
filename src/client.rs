@@ -20,7 +20,7 @@ impl From<SettingClient> for Client {
     }
 }
 
-struct TestResult {
+pub struct TestResult {
     best: Duration,
     worst: Duration,
     total: Duration,
@@ -28,27 +28,33 @@ struct TestResult {
 }
 
 impl TestResult {
-    fn log(&self, label: &str, call: &str) {
-        println!(
-            "{} - {}\n\tAvg. Duration: {:#?}\n\tBest Duration: {:?}\n\tWorst Duration: {:?}",
-            label,
-            call,
-            self.total.div(self.count),
-            self.best,
-            self.worst,
-        );
+    fn to_table(&self, label: &str, call: &str) -> Vec<String> {
+        vec![
+            label.to_string(),
+            call.to_string(),
+            format!("{} ms", self.total.div(self.count).as_millis()),
+            format!("{} ms", self.best.as_millis()),
+            format!("{} ms", self.worst.as_millis()),
+        ]
     }
 }
 
 impl Client {
-    pub async fn test(&self, count: u32) {
-        self.run_test(|| self.rpc.get_slot(), count)
-            .await
-            .log(self.label.as_str(), "get_slot");
+    pub async fn test(&self, count: u32) -> Vec<Vec<String>> {
+        let mut results = vec![];
+        results.push(
+            self.run_test(|| self.rpc.get_slot(), count)
+                .await
+                .to_table(&self.label, "get_slot"),
+        );
 
-        self.run_test(|| self.rpc.get_multiple_accounts(&ACCOUNTS), count)
-            .await
-            .log(self.label.as_str(), "get_multiple_accounts");
+        results.push(
+            self.run_test(|| self.rpc.get_multiple_accounts(&ACCOUNTS), count)
+                .await
+                .to_table(&self.label, "get_multiple_accounts"),
+        );
+
+        results
     }
 
     async fn run_test<F, Fut, T>(&self, mut f: F, count: u32) -> TestResult
