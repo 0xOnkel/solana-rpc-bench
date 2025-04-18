@@ -4,7 +4,7 @@ use solana_client::{client_error::Result as ClientResult, nonblocking::rpc_clien
 use tokio::time::{Instant, sleep};
 use tracing::error;
 
-use crate::{Result, setting::SettingClient};
+use crate::{Result, accounts::ACCOUNTS, setting::SettingClient};
 
 pub struct Client {
     label: String,
@@ -45,6 +45,10 @@ impl Client {
         self.run_test(|| self.rpc.get_slot(), count)
             .await
             .log(self.label.as_str(), "get_slot");
+
+        self.run_test(|| self.rpc.get_multiple_accounts(&ACCOUNTS), count)
+            .await
+            .log(self.label.as_str(), "get_multiple_accounts");
     }
 
     async fn run_test<F, Fut, T>(&self, mut f: F, count: u32) -> TestResult
