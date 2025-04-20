@@ -2,6 +2,13 @@
 name = "solana-rpc-bench"
 version = "0.1.0"
 edition = "2024"
+authors = ["onkel <me@onkel.dev>"]
+license = "MIT"
+description = "Benchmark Solana RPCs with real calls"
+readme = "README.md"
+homepage = "https://github.com/0xOnkel/solana-rpc-bench"
+repository = "https://github.com/0xOnkel/solana-rpc-bench"
+keywords = ["solana", "rpc", "cli"]
 
 [dependencies]
 config = "0.15.11"
