@@ -11,6 +11,14 @@ label = "Helius"
 url = "https://mainnet.helius-rpc.com/?api-key="
 ```
 
+## Change # of repeats
+By default, the test is run 3 times for each call. This can be changed with
+setting the `repeat` variable in the `config.toml` file.
+
+```toml
+repeat = 5
+```
+
 # Usage
 Just run the script with `cargo run --release` and you will get an output like
 ```
