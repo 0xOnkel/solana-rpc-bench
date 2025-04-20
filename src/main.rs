@@ -23,7 +23,7 @@ async fn main() {
     ];
 
     for rpc in rpcs {
-        results.extend(rpc.test(1).await);
+        results.extend(rpc.test(settings.repeat.unwrap_or(3)).await);
     }
 
     let mut table = Builder::from(results).build();

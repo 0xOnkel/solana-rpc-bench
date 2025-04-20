@@ -2,6 +2,7 @@ use config::Config;
 
 #[derive(Debug, serde::Deserialize)]
 pub struct Settings {
+    pub repeat: Option<u32>,
     #[serde(default, rename = "rpc")]
     pub rpcs: Vec<SettingClient>,
 }
