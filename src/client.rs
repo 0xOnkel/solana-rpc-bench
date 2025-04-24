@@ -7,7 +7,7 @@ use tracing::error;
 use crate::{Result, accounts::ACCOUNTS, setting::SettingClient};
 
 pub struct Client {
-    label: String,
+    pub label: String,
     pub rpc: RpcClient,
 }
 
@@ -28,13 +28,15 @@ pub struct TestResult {
 }
 
 impl TestResult {
-    fn to_table(&self, label: &str, call: &str) -> Vec<String> {
+    fn to_table(&self, call: &str) -> Vec<String> {
         vec![
-            label.to_string(),
             call.to_string(),
-            format!("{} ms", self.total.div(self.count).as_millis()),
-            format!("{} ms", self.best.as_millis()),
-            format!("{} ms", self.worst.as_millis()),
+            format!(
+                "{} ms | {} ms | {} ms",
+                self.total.div(self.count).as_millis(),
+                self.best.as_millis(),
+                self.worst.as_millis()
+            ),
         ]
     }
 }
@@ -45,13 +47,13 @@ impl Client {
         results.push(
             self.run_test(|| self.rpc.get_slot(), count)
                 .await
-                .to_table(&self.label, "get_slot"),
+                .to_table("get_slot"),
         );
 
         results.push(
             self.run_test(|| self.rpc.get_multiple_accounts(&ACCOUNTS), count)
                 .await
-                .to_table(&self.label, "get_multiple_accounts"),
+                .to_table("get_multiple_accounts"),
         );
 
         results
